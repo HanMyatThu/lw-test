@@ -26,8 +26,6 @@ export const Grid = () => {
       setROws([]);
       setColumns([]);
     }, 100);
-
-    fibonacciCheck(rowIndex, colIndex);
   };
 
   const increaseCell = (row: number, col: number) => {
