@@ -42,7 +42,7 @@ export const Grid = ({ gridSize, gridData }: GridProps) => {
     }
 
     // add delay to display first before removing the numbers
-    await new Promise((resolve) => setTimeout(resolve, 2500));
+    await new Promise((resolve) => setTimeout(resolve, 5000));
     checkFibonnaci();
   };
 

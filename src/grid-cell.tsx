@@ -29,7 +29,7 @@ export const GridCell = ({
   selectedCells = [],
   removedCells,
 }: GridCellProps) => {
-  const debouncedValue = UseDebounced(text, 300);
+  const debouncedValue = UseDebounced(text, 200);
   const [changedColor, setChangeColor] = useState<ChangeType>(null);
 
   useEffect(() => {
