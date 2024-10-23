@@ -15,6 +15,7 @@ interface ISelectedCells {
 
 export const Grid = ({ gridSize, gridData }: GridProps) => {
   const [selectedCells, setSelectedCells] = useState<ISelectedCells[]>([]);
+  const [removedCells, setRemovedCells] = useState<ISelectedCells[]>([]);
   const [isTriggered, setIsTriggered] = useState<boolean>(false);
 
   const fibonacci = new Set([1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144]);
@@ -30,12 +31,15 @@ export const Grid = ({ gridSize, gridData }: GridProps) => {
 
   const handleOnClick = async (rowIndex: number, colIndex: number) => {
     setSelectedCells(() => []);
+    setRemovedCells(() => []);
     setIsTriggered(false);
+
     increaseCell(rowIndex, colIndex);
     for (let i = 0; i < gridSize; i++) {
       if (i !== colIndex) increaseCell(rowIndex, i);
       if (i !== rowIndex) increaseCell(i, colIndex);
     }
+
     // add delay to display first before removing the numbers
     await new Promise((resolve) => setTimeout(resolve, 2500));
     checkFibonnaci();
@@ -75,6 +79,14 @@ export const Grid = ({ gridSize, gridData }: GridProps) => {
           for (let i = colIndex; i < colIndex + 5; i++) {
             gridData[rowIndex][i] = 0;
             setIsTriggered(true);
+
+            setRemovedCells((prevCells) => {
+              const newCells = [
+                ...prevCells,
+                { rowIndex: rowIndex, colIndex: i },
+              ];
+              return newCells;
+            });
           }
         }
       }
@@ -96,6 +108,14 @@ export const Grid = ({ gridSize, gridData }: GridProps) => {
           for (let i = 0; i < 5; i++) {
             gridData[rowIndex + i][colIndex] = 0;
             setIsTriggered(true);
+
+            setRemovedCells((prevCells) => {
+              const newCells = [
+                ...prevCells,
+                { rowIndex: rowIndex + i, colIndex: colIndex },
+              ];
+              return newCells;
+            });
           }
         }
       }
@@ -121,6 +141,7 @@ export const Grid = ({ gridSize, gridData }: GridProps) => {
                 text={item}
                 onClick={handleOnClick}
                 selectedCells={selectedCells}
+                removedCells={removedCells}
                 isTriggered={isTriggered}
               />
             ))}

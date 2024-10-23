@@ -15,6 +15,7 @@ interface GridCellProps {
   onClick: (rowId: number, colId: number) => void;
   isTriggered: boolean;
   selectedCells: ISelectedCells[];
+  removedCells: ISelectedCells[];
 }
 
 type ChangeType = "add" | "del" | null;
@@ -26,6 +27,7 @@ export const GridCell = ({
   onClick,
   isTriggered = false,
   selectedCells = [],
+  removedCells,
 }: GridCellProps) => {
   const debouncedValue = UseDebounced(text, 300);
   const [changedColor, setChangeColor] = useState<ChangeType>(null);
@@ -47,6 +49,10 @@ export const GridCell = ({
     (cell) => cell.colIndex === colId && cell.rowIndex === rowId
   );
 
+  const isCellRemoved = removedCells.find(
+    (cell) => cell.colIndex === colId && cell.rowIndex === rowId
+  );
+
   return (
     <div
       onClick={() => onClick(rowId, colId)}
@@ -55,7 +61,9 @@ export const GridCell = ({
         changedColor === "add" &&
           isCellSelected &&
           "bg-yellow-200 transition ease-in delay-150",
-        changedColor === "del" && "bg-green-400 transition ease-out "
+        changedColor === "del" &&
+          isCellRemoved &&
+          "bg-green-400 transition ease-out "
       )}
     >
       {`${debouncedValue ? debouncedValue : ""}`}
