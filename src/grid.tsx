@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { GridCell } from "./grid-cell";
 import toast from "react-hot-toast";
+import { isFibonacciMatch } from "./util";
 
 interface GridProps {
   gridSize: number;
@@ -73,9 +74,7 @@ export const Grid = ({ gridSize, gridData }: GridProps) => {
       const row = gridData[rowIndex];
       for (let colIndex = 0; colIndex <= row.length - 5; colIndex++) {
         const slice = row.slice(colIndex, colIndex + 5);
-        if (
-          sequences.some((seq) => JSON.stringify(seq) === JSON.stringify(slice))
-        ) {
+        if (isFibonacciMatch(sequences, slice)) {
           for (let i = colIndex; i < colIndex + 5; i++) {
             gridData[rowIndex][i] = 0;
             setIsTriggered(true);
@@ -102,9 +101,7 @@ export const Grid = ({ gridSize, gridData }: GridProps) => {
           gridData[rowIndex + 3][colIndex],
           gridData[rowIndex + 4][colIndex],
         ];
-        if (
-          sequences.some((seq) => JSON.stringify(seq) === JSON.stringify(slice))
-        ) {
+        if (isFibonacciMatch(sequences, slice)) {
           for (let i = 0; i < 5; i++) {
             gridData[rowIndex + i][colIndex] = 0;
             setIsTriggered(true);
