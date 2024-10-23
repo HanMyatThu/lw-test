@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { GridCell } from "./grid-cell";
 
 interface GridProps {
@@ -6,41 +7,33 @@ interface GridProps {
   gridData: (number | null)[][];
 }
 
+interface ISelectedCells {
+  rowIndex: number;
+  colIndex: number;
+}
+
 export const Grid = ({ gridSize, gridData }: GridProps) => {
-  const [rows, setROws] = useState<number[]>([]);
-  const [columns, setColumns] = useState<number[]>([]);
+  const [selectedCells, setSelectedCells] = useState<ISelectedCells[]>([]);
+  const [isTriggered, setIsTriggered] = useState<boolean>(false);
 
   const fibonacci = new Set([1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144]);
 
   const handleOnClick = async (rowIndex: number, colIndex: number) => {
-    setROws([]);
-    setColumns([]);
+    setIsTriggered(false);
     increaseCell(rowIndex, colIndex);
     for (let i = 0; i < gridSize; i++) {
       if (i !== colIndex) increaseCell(rowIndex, i);
       if (i !== rowIndex) increaseCell(i, colIndex);
     }
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     checkFibonnaci();
   };
 
   const increaseCell = (row: number, col: number) => {
-    const isRowExisted = rows.find((r) => r === row);
-    if (!isRowExisted) {
-      const newRows: number[] = rows;
-      rows.push(row);
-      setROws(newRows);
-    }
-
-    const isColExisted = columns.find((c) => c === col);
-    if (!isColExisted) {
-      const newColumns: number[] = columns;
-      newColumns.push(col);
-      setROws(newColumns);
-    }
-
     const value = gridData[row][col];
+    setSelectedCells([...selectedCells, { rowIndex: row, colIndex: col }]);
 
-    if (value === null) {
+    if (value === null || value === 0) {
       gridData[row][col] = 1;
     } else {
       gridData[row][col] = Number(gridData[row][col]!) + 1;
@@ -65,6 +58,7 @@ export const Grid = ({ gridSize, gridData }: GridProps) => {
         ) {
           for (let i = colIndex; i < colIndex + 5; i++) {
             gridData[rowIndex][i] = 0;
+            setIsTriggered(true);
           }
         }
       }
@@ -85,6 +79,7 @@ export const Grid = ({ gridSize, gridData }: GridProps) => {
         ) {
           for (let i = 0; i < 5; i++) {
             gridData[rowIndex + i][colIndex] = 0;
+            setIsTriggered(true);
           }
         }
       }
@@ -110,6 +105,7 @@ export const Grid = ({ gridSize, gridData }: GridProps) => {
                 colId={cId}
                 text={item}
                 onClick={handleOnClick}
+                isTriggered={isTriggered}
               />
             ))}
           </div>
