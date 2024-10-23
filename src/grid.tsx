@@ -1,31 +1,26 @@
 import { useState } from "react";
 import { GridCell } from "./grid-cell";
 
-const gridSize = 50;
+interface GridProps {
+  gridSize: number;
+  gridData: (number | null)[][];
+}
 
-export const Grid = () => {
-  const data: (number | null)[][] = Array.from({ length: gridSize }, () =>
-    Array(gridSize).fill(null)
-  );
-  const [gridData, setGridData] = useState(data);
+export const Grid = ({ gridSize, gridData }: GridProps) => {
   const [rows, setROws] = useState<number[]>([]);
-  const [removedRow, setRemoveRows] = useState<number[]>([]);
   const [columns, setColumns] = useState<number[]>([]);
-  const [removeColumn, setRemovedColumns] = useState<number[]>([]);
 
   const fibonacci = new Set([1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144]);
 
   const handleOnClick = async (rowIndex: number, colIndex: number) => {
+    setROws([]);
+    setColumns([]);
     increaseCell(rowIndex, colIndex);
     for (let i = 0; i < gridSize; i++) {
       if (i !== colIndex) increaseCell(rowIndex, i);
       if (i !== rowIndex) increaseCell(i, colIndex);
     }
-
-    setTimeout(() => {
-      setROws([]);
-      setColumns([]);
-    }, 100);
+    checkFibonnaci();
   };
 
   const increaseCell = (row: number, col: number) => {
@@ -50,28 +45,9 @@ export const Grid = () => {
     } else {
       gridData[row][col] = Number(gridData[row][col]!) + 1;
     }
-    setGridData(gridData);
   };
 
-  const fibonacciCheck = (row: number, col: number) => {
-    for (let i = 0; i < gridSize; i++) {
-      //cells[13][1,2,3,4,5,6,7,8] checking row
-      const data: (number | null)[] = gridData[row];
-      checkLine(data, row, "row");
-    }
-
-    for (let i = 0; i < gridSize; i++) {
-      //loop every cell array for a column index
-      const column: (number | null)[] = gridData.map((row) => row[col]);
-      checkLine(column, col, "col");
-    }
-  };
-
-  const checkLine = (
-    line: (number | null)[],
-    mainIndex: number,
-    type: "row" | "col"
-  ) => {
+  const checkFibonnaci = () => {
     const fibonacciArray = Array.from(fibonacci);
     const sequences = [];
 
@@ -79,31 +55,40 @@ export const Grid = () => {
       sequences.push(fibonacciArray.slice(i, i + 5));
     }
 
-    for (let i = 0; i <= line.length - 5; i++) {
-      const subArray = line.slice(i, i + 5);
-      let index = i;
-      if (
-        sequences.some(
-          (seq) => JSON.stringify(seq) === JSON.stringify(subArray)
-        )
-      ) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        for (const _ of subArray) {
-          if (type === "row") {
-            clearCell(mainIndex, index); // Clear row cells
-          } else {
-            clearCell(index, mainIndex); // Clear column cells
+    // remove vertically
+    for (let rowIndex = 0; rowIndex < gridData.length; rowIndex++) {
+      const row = gridData[rowIndex];
+      for (let colIndex = 0; colIndex <= row.length - 5; colIndex++) {
+        const slice = row.slice(colIndex, colIndex + 5);
+        if (
+          sequences.some((seq) => JSON.stringify(seq) === JSON.stringify(slice))
+        ) {
+          for (let i = colIndex; i < colIndex + 5; i++) {
+            gridData[rowIndex][i] = 0;
           }
-          index++;
         }
       }
     }
-  };
 
-  const clearCell = (row: number, col: number) => {
-    gridData[row][col] = null;
-    setRemoveRows([...removedRow, row]);
-    setRemovedColumns([...removeColumn, col]);
+    //remove horizontally
+    for (let colIndex = 0; colIndex < gridData[0].length; colIndex++) {
+      for (let rowIndex = 0; rowIndex <= gridData.length - 5; rowIndex++) {
+        const slice = [
+          gridData[rowIndex][colIndex],
+          gridData[rowIndex + 1][colIndex],
+          gridData[rowIndex + 2][colIndex],
+          gridData[rowIndex + 3][colIndex],
+          gridData[rowIndex + 4][colIndex],
+        ];
+        if (
+          sequences.some((seq) => JSON.stringify(seq) === JSON.stringify(slice))
+        ) {
+          for (let i = 0; i < 5; i++) {
+            gridData[rowIndex + i][colIndex] = 0;
+          }
+        }
+      }
+    }
   };
 
   return (
@@ -120,6 +105,7 @@ export const Grid = () => {
           <div key={rId}>
             {d.map((item, cId) => (
               <GridCell
+                key={`${rId}-${cId}`}
                 rowId={rId}
                 colId={cId}
                 text={item}
