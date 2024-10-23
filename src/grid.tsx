@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { GridCell } from "./grid-cell";
+import toast from "react-hot-toast";
 
 interface GridProps {
   gridSize: number;
@@ -18,6 +19,15 @@ export const Grid = ({ gridSize, gridData }: GridProps) => {
 
   const fibonacci = new Set([1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144]);
 
+  useEffect(() => {
+    if (isTriggered) {
+      toast("Removed Numbers", {
+        duration: 2000,
+        className: "text-blue-500 font-semibold",
+      });
+    }
+  }, [isTriggered]);
+
   const handleOnClick = async (rowIndex: number, colIndex: number) => {
     setSelectedCells(() => []);
     setIsTriggered(false);
@@ -26,6 +36,7 @@ export const Grid = ({ gridSize, gridData }: GridProps) => {
       if (i !== colIndex) increaseCell(rowIndex, i);
       if (i !== rowIndex) increaseCell(i, colIndex);
     }
+    // add delay to display first before removing the numbers
     await new Promise((resolve) => setTimeout(resolve, 2500));
     checkFibonnaci();
   };
@@ -94,11 +105,10 @@ export const Grid = ({ gridSize, gridData }: GridProps) => {
   return (
     <div className="flex text-blue-500 text-2xl">
       <div
+        className="grid gap-1"
         style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(50, 22px)",
-          gridTemplateRows: "repeat(50, 22px)",
-          gap: "1px",
+          gridTemplateColumns: "repeat(50, 32px)",
+          gridTemplateRows: "repeat(50, 32px)",
         }}
       >
         {gridData.map((d, rId) => (

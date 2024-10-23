@@ -51,7 +51,7 @@ export const GridCell = ({
     <div
       onClick={() => onClick(rowId, colId)}
       className={twMerge(
-        "w-8 h-8 items-center bg-white border border-neutral-500 cursor-pointer transition-colors text-black font-semibold text-sm text-center justify-center",
+        "w-8 h-8 flex mt-1 bg-white border border-neutral-300 cursor-pointer transition-colors text-neutral-900/80 hover:text-neutral-500 font-semibold text-sm text-center justify-center items-center shadown-sm rounded-md",
         changedColor === "add" &&
           isCellSelected &&
           "bg-yellow-200 transition ease-in delay-150",

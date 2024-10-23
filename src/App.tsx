@@ -1,3 +1,5 @@
+import { Toaster } from "react-hot-toast";
+
 import { Grid } from "./grid";
 
 const App = () => {
@@ -7,9 +9,12 @@ const App = () => {
   );
 
   return (
-    <div className="h-full min-w-screen">
-      Hello World
-      <Grid gridSize={50} gridData={data} />
+    <div className="h-full min-w-screen flex flex-col items-center justify-center space-y-12">
+      <p className="text-xl mt-4 font-bold">Grid System</p>
+      <div className="mt-5">
+        <Grid gridSize={50} gridData={data} />
+      </div>
+      <Toaster />
     </div>
   );
 };
