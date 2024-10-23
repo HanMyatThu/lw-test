@@ -19,19 +19,24 @@ export const Grid = ({ gridSize, gridData }: GridProps) => {
   const fibonacci = new Set([1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144]);
 
   const handleOnClick = async (rowIndex: number, colIndex: number) => {
+    setSelectedCells(() => []);
     setIsTriggered(false);
     increaseCell(rowIndex, colIndex);
     for (let i = 0; i < gridSize; i++) {
       if (i !== colIndex) increaseCell(rowIndex, i);
       if (i !== rowIndex) increaseCell(i, colIndex);
     }
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2500));
     checkFibonnaci();
   };
 
   const increaseCell = (row: number, col: number) => {
     const value = gridData[row][col];
-    setSelectedCells([...selectedCells, { rowIndex: row, colIndex: col }]);
+
+    setSelectedCells((prevCells) => {
+      const newCells = [...prevCells, { rowIndex: row, colIndex: col }];
+      return newCells;
+    });
 
     if (value === null || value === 0) {
       gridData[row][col] = 1;
@@ -105,6 +110,7 @@ export const Grid = ({ gridSize, gridData }: GridProps) => {
                 colId={cId}
                 text={item}
                 onClick={handleOnClick}
+                selectedCells={selectedCells}
                 isTriggered={isTriggered}
               />
             ))}

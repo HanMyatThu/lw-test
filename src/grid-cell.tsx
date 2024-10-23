@@ -3,12 +3,18 @@ import { useEffect, useState } from "react";
 
 import { UseDebounced } from "./use-debounced";
 
+interface ISelectedCells {
+  rowIndex: number;
+  colIndex: number;
+}
+
 interface GridCellProps {
   rowId: number;
   colId: number;
   text: number | null;
   onClick: (rowId: number, colId: number) => void;
   isTriggered: boolean;
+  selectedCells: ISelectedCells[];
 }
 
 type ChangeType = "add" | "del" | null;
@@ -19,6 +25,7 @@ export const GridCell = ({
   text,
   onClick,
   isTriggered = false,
+  selectedCells = [],
 }: GridCellProps) => {
   const debouncedValue = UseDebounced(text, 300);
   const [changedColor, setChangeColor] = useState<ChangeType>(null);
@@ -36,13 +43,19 @@ export const GridCell = ({
     return () => clearTimeout(timer);
   }, [text, isTriggered]);
 
+  const isCellSelected = selectedCells.find(
+    (cell) => cell.colIndex === colId && cell.rowIndex === rowId
+  );
+
   return (
     <div
       onClick={() => onClick(rowId, colId)}
       className={twMerge(
         "w-8 h-8 items-center bg-white border border-neutral-500 cursor-pointer transition-colors text-black font-semibold text-sm text-center justify-center",
-        changedColor === "add" && "bg-yellow-200 transition ease-in delay-150",
-        changedColor === "del" && "bg-green-400 transition ease-out"
+        changedColor === "add" &&
+          isCellSelected &&
+          "bg-yellow-200 transition ease-in delay-150",
+        changedColor === "del" && "bg-green-400 transition ease-out "
       )}
     >
       {`${debouncedValue ? debouncedValue : ""}`}
