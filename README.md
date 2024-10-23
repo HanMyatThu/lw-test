@@ -23,6 +23,12 @@
 
 after that go to "http://localhost:3000" to see the dev environment.
 
+## Description
+
+- use vite, react, typescript and tailwind
+- have fibonacci detention for whole grid
+- improve UI
+
 ## Screenshots
 
 ![Home Page](![image](https://github.com/user-attachments/assets/428c27fe-f016-484e-939e-41edae257cf4))
@@ -30,7 +36,7 @@ after that go to "http://localhost:3000" to see the dev environment.
 
 ## Demo
 
-You can test the deployed version via by this link.
+You can test the deployed version via by this link. https://lw-test.vercel.app
 
 
 
